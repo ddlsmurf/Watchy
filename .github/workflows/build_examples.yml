@@ -1,0 +1,20 @@
+name: Compile examples
+
+on: [ workflow_dispatch ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Get docker image
+        run: |
+          cd docker
+          BUILDER_TAG=${{ secrets.DOCKERHUB_IMAGE_TAG }} make pull_docker
+          make compile_all_examples
+      - name: Upload Watchy example binaries as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Watchy-Example-Binaries
+          path: examples/WatchFaces/*.bin
